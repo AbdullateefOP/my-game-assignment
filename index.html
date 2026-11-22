@@ -3,56 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Noughts & Crosses | IS3S664</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Noughts and Crosses — play a friend or the computer.">
+    <title>Ultimate Noughts & Crosses (X & O)</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="mosaic-mode">
-    <!-- This game has been implemented from scratch -->
-    <div class="game-container">
-        <header>
-            <h1>Noughts & Crosses</h1>
-            <p class="subtitle">USW Advanced Internet & Mobile Computing</p>
+<body>
+    <main class="app">
+        <header class="header">
+            <div>
+                <p class="eyebrow">CLASSIC GAME</p>
+                <h1><span>XO</span></h1>
+                <p class="subtitle">Think ahead. Make your move. Win the game.</p>
+            </div>
         </header>
 
-        <!-- Control Panel / Enhancements -->
-        <div class="controls">
-            <div class="control-group">
-                <label for="grid-size">Grid Size:</label>
-                <select id="grid-size">
-                    <option value="3">3 x 3 (Standard)</option>
-                    <option value="4">4 x 4 (Advanced)</option>
+        <section class="settings panel">
+            <div class="setting">
+                <label for="nameX">Player X name</label>
+                <input type="text" id="nameX" maxlength="12" placeholder="Player X" autocomplete="off">
+            </div>
+
+            <div class="setting" id="nameOSetting">
+                <label for="nameO">Player O name</label>
+                <input type="text" id="nameO" maxlength="12" placeholder="Player O" autocomplete="off">
+            </div>
+
+            <div class="setting">
+                <label for="gameMode">Game mode</label>
+                <select id="gameMode">
+                    <option value="pvp">Player vs Player</option>
+                    <option value="ai">Player vs Computer</option>
                 </select>
             </div>
-            <button id="mosaic-toggle-btn" class="btn btn-secondary" type="button">Mosaic: On</button>
-            <button id="reset-btn" class="btn" type="button">Restart Game</button>
-        </div>
 
-        <!-- Scoreboard (Persistent via localStorage) -->
-        <div class="scoreboard">
-            <div class="score-card">
-                <span>Player X</span>
-                <span id="score-x">0</span>
+            <div class="setting">
+                <label for="boardSize">Board size</label>
+                <select id="boardSize">
+                    <option value="3">3 x 3</option>
+                    <option value="4">4 x 4</option>
+                </select>
             </div>
-            <div class="score-card">
-                <span>Draws</span>
-                <span id="score-draw">0</span>
+
+            <div class="setting" id="difficultySetting">
+                <label for="difficulty">AI difficulty</label>
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
             </div>
-            <div class="score-card">
-                <span>Player O</span>
-                <span id="score-o">0</span>
+
+            <div class="setting">
+                <label for="matchMode">Match format</label>
+                <select id="matchMode">
+                    <option value="single">Single game</option>
+                    <option value="best3">Best of 3</option>
+                </select>
             </div>
-        </div>
+        </section>
 
-        <!-- Game Status -->
-        <div id="status" class="status">Player X's Turn</div>
+        <section class="game-layout">
+            <aside class="scoreboard panel">
+                <h2>Scoreboard</h2>
+                <div class="score-row" id="rowX">
+                    <div class="player-symbol">X</div>
+                    <div class="player-info">
+                        <strong id="playerOneLabel">Player X</strong>
+                        <span>Wins</span>
+                    </div>
+                    <strong class="score" id="scoreX">0</strong>
+                </div>
+                <div class="score-row" id="rowO">
+                    <div class="player-symbol o-symbol">O</div>
+                    <div class="player-info">
+                        <strong id="playerTwoLabel">Player O</strong>
+                        <span>Wins</span>
+                    </div>
+                    <strong class="score" id="scoreO">0</strong>
+                </div>
+                <div class="draw-row">
+                    <span>Draws</span>
+                    <strong id="draws">0</strong>
+                </div>
+                <div class="draw-row">
+                    <span>Games played</span>
+                    <strong id="gamesPlayed">0</strong>
+                </div>
+                <button id="resetScores" class="text-button">Reset statistics</button>
+            </aside>
 
-        <!-- Dynamic Game Board -->
-        <div id="board" class="board grid-3"></div>
+            <section class="game-area panel">
+                <div class="game-top">
+                    <div>
+                        <p class="eyebrow">CURRENT GAME</p>
+                        <h2 id="gameStatus">X's turn</h2>
+                    </div>
+                    <div class="game-top-right">
+                        <button id="mosaicToggle" class="chip-button" type="button" aria-pressed="true">Mosaic: On</button>
+                        <button id="muteToggle" class="chip-button" type="button" aria-pressed="false" title="Mute sound">🔊</button>
+                        <div class="timer">
+                            <span>TIME</span>
+                            <strong id="timer">00:00</strong>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Reset Stats Option -->
-        <button id="clear-stats-btn" class="btn-text" type="button">Reset Scoreboard</button>
-    </div>
+                <div id="board" class="board" aria-label="Game board"></div>
 
-    <script src="script.js"></script>
+                <div id="tension" class="tension" hidden>
+                    <span class="pulse"></span> <span id="tensionText"></span>
+                </div>
+
+                <p id="gameMessage" class="game-message" aria-live="polite">
+                    Make your first move!
+                </p>
+
+                <div class="game-actions">
+                    <button id="newGame" class="primary-button">New Game</button>
+                    <button id="resetMatch" class="secondary-button">Reset Match</button>
+                </div>
+            </section>
+        </section>
+
+        <section class="history panel">
+            <div class="history-heading">
+                <h2>Recent Games</h2>
+                <span>Game history</span>
+            </div>
+
+            <ul id="historyList">
+                <li class="empty-history">
+                    Your completed games will appear here.
+                </li>
+            </ul>
+
+            <div class="history-pagination">
+                <button id="previousPage" disabled>&larr; Previous</button>
+                <span id="pageInfo">Page 1 of 1</span>
+                <button id="nextPage" disabled>Next &rarr;</button>
+            </div>
+        </section>
+
+        <footer>
+            <p>Ultimate XO · Built with HTML, CSS &amp; JavaScript</p>
+        </footer>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/scoreboard.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
