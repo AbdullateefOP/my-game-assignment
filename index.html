@@ -4,28 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Noughts and Crosses — play a friend or the computer.">
-    <title>Ultimate Noughts & Crosses (X & O)</title>
+    <title>Advanced Noughts & Crosses | IS3S664</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <main class="app">
-        <header class="header">
-            <div>
-                <p class="eyebrow">CLASSIC GAME</p>
-                <h1><span>XO</span></h1>
-                <p class="subtitle">Think ahead. Make your move. Win the game.</p>
-            </div>
-        </header>
+    <!-- Start screen: player details are collected before the game begins. -->
+    <div id="startScreen">
+        <div class="panel start-card">
+            <h1 class="start-title">Noughts &amp; Crosses</h1>
+            <p class="subtitle">USW Advanced Internet &amp; Mobile Computing</p>
+            <p class="start-lead">Enter the players' details to begin.</p>
 
-        <section class="settings panel">
             <div class="setting">
                 <label for="nameX">Player X name</label>
                 <input type="text" id="nameX" maxlength="12" placeholder="Player X" autocomplete="off">
-            </div>
-
-            <div class="setting" id="nameOSetting">
-                <label for="nameO">Player O name</label>
-                <input type="text" id="nameO" maxlength="12" placeholder="Player O" autocomplete="off">
             </div>
 
             <div class="setting">
@@ -36,6 +28,25 @@
                 </select>
             </div>
 
+            <div class="setting" id="nameOSetting">
+                <label for="nameO">Player O name</label>
+                <input type="text" id="nameO" maxlength="12" placeholder="Player O" autocomplete="off">
+            </div>
+
+            <button id="startBtn" class="primary-button start-btn" type="button">Start Game</button>
+            <p class="audio-note">🔊 Sound on — tap Start to enable music</p>
+        </div>
+    </div>
+
+    <main class="app">
+        <header class="header">
+            <div>
+                <h1>Noughts &amp; Crosses</h1>
+                <p class="subtitle">USW Advanced Internet &amp; Mobile Computing</p>
+            </div>
+        </header>
+
+        <section class="settings panel">
             <div class="setting">
                 <label for="boardSize">Board size</label>
                 <select id="boardSize">
@@ -121,6 +132,7 @@
                 <div class="game-actions">
                     <button id="newGame" class="primary-button">New Game</button>
                     <button id="resetMatch" class="secondary-button">Reset Match</button>
+                    <button id="changePlayers" class="secondary-button">Change Players</button>
                 </div>
             </section>
         </section>
@@ -145,7 +157,7 @@
         </section>
 
         <footer>
-            <p>Ultimate XO · Built with HTML, CSS &amp; JavaScript</p>
+            <p>Noughts &amp; Crosses · USW Advanced Internet &amp; Mobile Computing</p>
         </footer>
     </main>
 

@@ -468,3 +468,57 @@ body.mosaic {
 @media (prefers-reduced-motion: reduce) {
     .tension .pulse { animation: none; }
 }
+
+/* ---- Start screen (name entry before the game) ---- */
+#startScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: var(--bg);
+    background-image:
+        radial-gradient(1100px 650px at 15% -10%, rgba(88, 166, 255, 0.16), transparent 60%),
+        radial-gradient(1000px 650px at 90% 110%, rgba(167, 139, 250, 0.15), transparent 60%);
+    background-repeat: no-repeat;
+}
+
+#startScreen[hidden] { display: none; }
+
+.start-card {
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.start-title {
+    font-size: clamp(28px, 5vw, 40px);
+    margin-bottom: 6px;
+}
+
+.start-card .subtitle { margin-bottom: 16px; }
+
+.start-lead {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 22px;
+}
+
+.start-card .setting {
+    text-align: left;
+    margin-bottom: 14px;
+}
+
+.start-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 13px;
+    font-size: 15px;
+}
+
+.audio-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+}

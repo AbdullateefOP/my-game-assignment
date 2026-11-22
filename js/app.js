@@ -78,6 +78,12 @@ const App = {
 
     // ---------- events ----------
     bindEvents() {
+        document.getElementById("startBtn")
+            .addEventListener("click", () => this.startGame());
+
+        document.getElementById("changePlayers")
+            .addEventListener("click", () => this.changePlayers());
+
         document.getElementById("newGame")
             .addEventListener("click", () => { this.ensureAudio(); this.newGame(); });
 
@@ -87,12 +93,9 @@ const App = {
         document.getElementById("resetScores")
             .addEventListener("click", () => this.resetScores());
 
+        // Game mode is chosen on the start screen; just update which fields show.
         document.getElementById("gameMode")
-            .addEventListener("change", () => {
-                this.matchWins = { X: 0, O: 0 };
-                this.updateSettings();
-                this.newGame();
-            });
+            .addEventListener("change", () => this.updateSettings());
 
         document.getElementById("boardSize")
             .addEventListener("change", () => {
@@ -131,6 +134,23 @@ const App = {
                 GameAudio.setMuted(this.muted);
                 this.updateMuteButton();
             });
+    },
+
+    // Collect names on the start screen, then reveal the game.
+    startGame() {
+        this.ensureAudio();
+        this.saveNames();
+        this.updateSettings();
+        document.getElementById("startScreen").hidden = true;
+        this.matchWins = { X: 0, O: 0 };
+        this.newGame();
+    },
+
+    // Return to the start screen to change the players (ends the current match).
+    changePlayers() {
+        GameAudio.stopMusic();
+        document.getElementById("startScreen").hidden = false;
+        document.getElementById("nameX").focus();
     },
 
     updateSettings() {
