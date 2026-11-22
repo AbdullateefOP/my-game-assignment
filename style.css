@@ -17,20 +17,22 @@
 
 body {
     background-color: var(--bg-color);
-    background-image:
-        linear-gradient(135deg, rgba(56, 189, 248, 0.16) 25%, transparent 25%),
-        linear-gradient(225deg, rgba(244, 63, 94, 0.16) 25%, transparent 25%),
-        linear-gradient(45deg, rgba(250, 204, 21, 0.10) 25%, transparent 25%),
-        linear-gradient(315deg, rgba(52, 211, 153, 0.12) 25%, #0b1120 25%);
-    background-position: 28px 0, 28px 0, 0 0, 0 0;
-    background-size: 56px 56px;
-    background-repeat: repeat;
     color: var(--text-color);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     padding: 1rem;
+}
+
+/* Soft radial glow — only shows when the Mosaic toggle is on. */
+body.mosaic-mode {
+    background-image:
+        radial-gradient(1100px 650px at 18% -5%, rgba(56, 189, 248, 0.16), transparent 60%),
+        radial-gradient(1000px 650px at 88% 105%, rgba(244, 63, 94, 0.14), transparent 60%),
+        radial-gradient(820px 560px at 50% 45%, rgba(168, 85, 247, 0.09), transparent 70%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .game-container {
@@ -142,7 +144,8 @@ select {
 
 .cell {
     aspect-ratio: 1;
-    background-color: #0f172a;
+    /* --cell-bg is set per cell by JS when Mosaic is on; falls back to the plain tile otherwise. */
+    background-color: var(--cell-bg, #0f172a);
     border: 2px solid var(--border-color);
     border-radius: 0.5rem;
     clip-path: polygon(
@@ -153,16 +156,30 @@ select {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: inherit;
     font-size: 2.2rem;
     font-weight: bold;
+    color: var(--text-color);
     cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
     transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
 }
 
-.cell:hover {
-    background-color: var(--hover-color) !important;
+/* :hover wins on specificity over the base rule, so no !important is needed. */
+.cell:hover:not(:disabled) {
+    background-color: var(--hover-color);
     border-color: #94a3b8;
     transform: scale(1.02);
+}
+
+.cell:focus-visible {
+    outline: 3px solid var(--accent-x);
+    outline-offset: 2px;
+}
+
+.cell:disabled {
+    cursor: default;
 }
 
 .cell.x {
@@ -171,6 +188,22 @@ select {
 
 .cell.o {
     color: var(--accent-o);
+}
+
+/* Winning line highlight */
+.cell.win {
+    border-color: #facc15;
+    box-shadow: inset 0 0 0 2px rgba(250, 204, 21, 0.6), 0 0 18px rgba(250, 204, 21, 0.45);
+    animation: win-pulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes win-pulse {
+    from { transform: scale(1); }
+    to   { transform: scale(1.05); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cell.win { animation: none; }
 }
 
 .btn-text {
@@ -184,4 +217,134 @@ select {
 
 .btn-text:hover {
     color: var(--text-color);
+}
+
+.footer-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.footer-actions .dot { color: #475569; }
+
+/* ---------- Start screen (name entry) ---------- */
+/* Show the start screen first; reveal the game only after Start. */
+#game { display: none; }
+body.playing #start-screen { display: none; }
+body.playing #game { display: block; }
+
+.intro {
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    margin-bottom: 1.5rem;
+}
+
+.name-field {
+    text-align: left;
+    margin-bottom: 1.1rem;
+}
+
+.name-field label {
+    display: block;
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    margin-bottom: 0.35rem;
+}
+
+.name-field .mark { font-weight: 700; }
+.name-field.x .mark { color: var(--accent-x); }
+.name-field.o .mark { color: var(--accent-o); }
+
+.name-field input {
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border-radius: 0.5rem;
+    background: #0f172a;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.name-field input:focus {
+    outline: none;
+    border-color: var(--accent-x);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+}
+
+.name-field input::placeholder { color: #64748b; }
+
+.vs {
+    font-size: 0.8rem;
+    color: #64748b;
+    letter-spacing: 0.15em;
+    margin: 0.2rem 0 0.9rem;
+}
+
+.start-btn {
+    width: 100%;
+    margin-top: 0.4rem;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+}
+
+.audio-note {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+/* ---------- Mute button ---------- */
+.btn-icon {
+    background: #0f172a;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.45rem 0.6rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.btn-icon:hover { border-color: #94a3b8; }
+
+/* ---------- Active player's scoreboard card ---------- */
+.score-card.active { box-shadow: 0 0 0 1px currentColor; }
+#card-x.active { border-color: var(--accent-x); color: var(--accent-x); }
+#card-o.active { border-color: var(--accent-o); color: var(--accent-o); }
+/* keep the score number readable regardless of the card's accent colour */
+.score-card.active span:last-child { color: var(--text-color); }
+
+/* ---------- Tension indicator ---------- */
+.tension {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: #fca5a5;
+    background: rgba(244, 63, 94, 0.12);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+}
+
+.tension[hidden] { display: none; }
+
+.tension .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-o);
+    animation: tension-beat 0.6s infinite alternate;
+}
+
+@keyframes tension-beat {
+    from { transform: scale(1); opacity: 0.6; }
+    to   { transform: scale(1.5); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tension .pulse { animation: none; }
 }
