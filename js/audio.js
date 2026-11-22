@@ -1,48 +1,40 @@
-/* Procedurally generated game audio — no sound files.
- * Exposes window.GameAudio. All sound is built with the Web Audio API so the
- * game stays fully self-contained and works offline.
- *
- *   - move(player)        a short blip on each placement (pitch differs X vs O)
- *   - updateTension(info) starts/scales the tense background music, or stops it
- *   - win() / draw()      short end-of-game stingers
- *   - setMuted(bool)      master mute (persisted by the caller)
- *
- * The AudioContext is only created after a user gesture (the Start button),
- * which is what browsers require before any sound can play.
+/* Procedurally generated game audio — no sound files (Web Audio API).
+ * Exposes window.GameAudio.
+ *   - move(player)        short blip on each placement (pitch differs X vs O)
+ *   - updateTension(info) starts/scales tense music, or stops it
+ *   - win() / draw()      end-of-game stingers
+ *   - setMuted(bool)      master mute
+ * The AudioContext is created lazily on the first user gesture (a move or a
+ * control click), which is what browsers require before sound can play.
  */
 window.GameAudio = (function () {
     let ctx = null;
     let master = null;
     let muted = false;
 
-    // --- Background-music scheduler state ---
-    let playing = false;        // is tense music currently running?
+    let playing = false;
     let schedulerId = null;
     let nextNoteTime = 0;
     let step = 0;
-    let currentBPM = 90;
-    const LOOKAHEAD = 0.1;       // schedule notes this far ahead (s)
-    const TICK = 25;             // scheduler wake-up interval (ms)
+    let currentBPM = 92;
+    const LOOKAHEAD = 0.1;
+    const TICK = 25;
 
-    // A minor pentatonic pattern — tense but not harsh. Semitones from the root.
-    const PATTERN = [0, 3, 7, 10, 12, 10, 7, 3];
-    const ROOT = 220; // A3
+    const PATTERN = [0, 3, 7, 10, 12, 10, 7, 3]; // minor pentatonic
+    const ROOT = 220;
 
-    function freqFor(semitones) {
-        return ROOT * Math.pow(2, semitones / 12);
-    }
+    const freqFor = s => ROOT * Math.pow(2, s / 12);
 
     function ensureContext() {
         if (ctx) return;
         const AC = window.AudioContext || window.webkitAudioContext;
-        if (!AC) return; // audio unsupported — every method becomes a no-op
+        if (!AC) return;
         ctx = new AC();
         master = ctx.createGain();
         master.gain.value = muted ? 0 : 0.5;
         master.connect(ctx.destination);
     }
 
-    // Called on the Start-button gesture: create + unlock the context.
     function init() {
         ensureContext();
         if (ctx && ctx.state === 'suspended') ctx.resume();
@@ -51,9 +43,9 @@ window.GameAudio = (function () {
     function setMuted(value) {
         muted = !!value;
         if (master) master.gain.setTargetAtTime(muted ? 0 : 0.5, ctx.currentTime, 0.02);
+        if (muted) stopMusic();
     }
 
-    // A single enveloped tone.
     function tone(freq, start, duration, type, peak) {
         if (!ctx) return;
         const osc = ctx.createOscillator();
@@ -74,18 +66,13 @@ window.GameAudio = (function () {
         if (muted) return;
         ensureContext();
         if (!ctx) return;
-        // X slightly higher/brighter, O slightly lower/warmer.
-        const base = player === 'X' ? 440 : 330;
-        tone(base, ctx.currentTime, 0.12, 'triangle', 0.25);
+        tone(player === 'X' ? 440 : 330, ctx.currentTime, 0.12, 'triangle', 0.25);
     }
 
-    // --- Tense background music ---
     function scheduleNote(time) {
         const semitone = PATTERN[step % PATTERN.length];
-        // Lift the whole phrase an octave on faster (more urgent) passages.
         const octaveLift = currentBPM > 140 ? 12 : 0;
         tone(freqFor(semitone + octaveLift), time, 0.18, 'sawtooth', 0.14);
-        // A soft bass pulse on the downbeat grounds the tension.
         if (step % 4 === 0) tone(ROOT / 2, time, 0.22, 'sine', 0.22);
     }
 
@@ -93,13 +80,13 @@ window.GameAudio = (function () {
         if (!ctx) return;
         while (nextNoteTime < ctx.currentTime + LOOKAHEAD) {
             scheduleNote(nextNoteTime);
-            nextNoteTime += (60.0 / currentBPM) * 0.5; // eighth notes
+            nextNoteTime += (60.0 / currentBPM) * 0.5;
             step++;
         }
     }
 
     function startMusic() {
-        if (playing || !ctx) return;
+        if (playing || !ctx || muted) return;
         playing = true;
         step = 0;
         nextNoteTime = ctx.currentTime + 0.05;
@@ -111,23 +98,15 @@ window.GameAudio = (function () {
         if (schedulerId) { clearInterval(schedulerId); schedulerId = null; }
     }
 
-    /* info = { threatCount, fillRatio, active }
-     * - threatCount: how many immediate winning threats are on the board
-     * - fillRatio:   0..1 how full the board is (closer to the end = tenser)
-     * - active:      is the game still in progress
-     * No threats (or game over) => music stops and the mood relaxes to silence.
-     * More threats / a fuller board => faster tempo. Fewer threats (a block)
-     * => the recomputed tempo drops, easing the mood back down.
-     */
+    // info = { threatCount, fillRatio, active }
     function updateTension(info) {
         ensureContext();
         if (!ctx) return;
         const { threatCount = 0, fillRatio = 0, active = true } = info || {};
-        if (!active || threatCount <= 0) {
+        if (!active || threatCount <= 0 || muted) {
             stopMusic();
             return;
         }
-        // Base tempo when danger first appears, scaling with threats and fill.
         currentBPM = Math.min(184, 92 + (threatCount - 1) * 16 + fillRatio * 44);
         startMusic();
     }

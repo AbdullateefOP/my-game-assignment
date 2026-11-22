@@ -1,0 +1,524 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg: #0b1020;
+    --panel: #151d32;
+    --border: #293650;
+    --text: #f1f5ff;
+    --muted: #8e9bb4;
+    --blue: #58a6ff;
+    --purple: #a78bfa;
+    --green: #39dca5;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 35px 18px;
+}
+
+.app {
+    max-width: 1050px;
+    margin: auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.eyebrow {
+    color: var(--blue);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+h1 {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 800;
+}
+
+h1 span {
+    color: var(--blue);
+}
+
+.subtitle {
+    color: var(--muted);
+    margin-top: 7px;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 22px;
+}
+
+.settings {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.setting label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 9px;
+}
+
+select {
+    width: 100%;
+    background: #0d1528;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 12px;
+    font: inherit;
+    outline: none;
+}
+
+.game-layout {
+    display: grid;
+    grid-template-columns: 270px 1fr;
+    gap: 22px;
+}
+
+.scoreboard h2, .history h2 {
+    font-size: 18px;
+    margin-bottom: 23px;
+}
+
+.score-row {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.player-symbol {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #1b3453;
+    color: var(--blue);
+    font-weight: 800;
+    font-size: 22px;
+}
+
+.o-symbol {
+    color: var(--purple);
+    background: #30274c;
+}
+
+.player-info {
+    flex: 1;
+}
+
+.player-info strong, .player-info span {
+    display: block;
+}
+
+.player-info span, .draw-row {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.score {
+    font-size: 25px;
+}
+
+.draw-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    font-size: 14px;
+}
+
+.draw-row strong {
+    color: var(--text);
+}
+
+.text-button {
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    cursor: pointer;
+    margin-top: 18px;
+    font: inherit;
+}
+
+.game-top, .history-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.game-top h2 {
+    font-size: 22px;
+}
+
+.timer {
+    text-align: right;
+}
+
+.timer span {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.timer strong {
+    font-size: 22px;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 430px;
+    margin: 25px auto 15px;
+}
+
+.board.size-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.cell {
+    aspect-ratio: 1;
+    background: #0d1528;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--blue);
+    font-size: clamp(28px, 6vw, 52px);
+    font-weight: 800;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.cell:hover:enabled {
+    background: #1c2b48;
+    border-color: var(--blue);
+    transform: translateY(-2px);
+}
+
+.cell.o {
+    color: var(--purple);
+}
+
+.cell.winner {
+    background: #164735;
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.cell:disabled {
+    cursor: not-allowed;
+}
+
+.game-message {
+    text-align: center;
+    color: var(--muted);
+    min-height: 24px;
+    font-size: 13px;
+    margin: 12px 0 18px;
+}
+
+.game-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+button {
+    font-family: inherit;
+}
+
+.primary-button, .secondary-button {
+    border: 0;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.primary-button {
+    background: var(--blue);
+    color: #081326;
+}
+
+.secondary-button {
+    background: #26334c;
+    color: var(--text);
+}
+
+button:hover {
+    filter: brightness(1.15);
+}
+
+.history {
+    margin-top: 22px;
+}
+
+.history-heading span {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+#historyList {
+    list-style: none;
+}
+
+#historyList li {
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.empty-history {
+    color: var(--muted);
+}
+
+
+.history-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.history-pagination button {
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.history-pagination button:hover:not(:disabled) {
+    opacity: 0.8;
+}
+
+.history-pagination button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+#pageInfo {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+
+footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 30px 0 10px;
+}
+
+@media(max-width: 750px) {
+    .settings {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .game-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .scoreboard {
+        order: 2;
+    }
+
+    .game-area {
+        order: 1;
+    }
+}
+
+@media(max-width: 420px) {
+    body {
+        padding: 20px 10px;
+    }
+
+    .panel {
+        padding: 15px;
+    }
+
+    .game-actions {
+        flex-direction: column;
+    }
+}
+
+
+/* ===================================================================
+   Added features (from game 1): names, mosaic, sound, tension cue
+   =================================================================== */
+
+/* Name inputs — match the native selects */
+.setting input[type="text"] {
+    width: 100%;
+    background: #0d1528;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 12px;
+    font: inherit;
+    outline: none;
+}
+
+.setting input[type="text"]:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.22);
+}
+
+.setting input[type="text"]::placeholder { color: var(--muted); }
+
+/* Top-right controls: mosaic + mute chips next to the timer */
+.game-top-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chip-button {
+    background: #0d1528;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 7px 12px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.chip-button:hover { border-color: var(--blue); }
+
+/* Tension indicator — fair cue: it never reveals which square */
+.tension {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 auto 4px;
+    width: fit-content;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    color: #fecaca;
+    background: rgba(244, 63, 94, 0.12);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+}
+
+.tension[hidden] { display: none; }
+
+.tension .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fb7185;
+    animation: tension-beat 0.6s infinite alternate;
+}
+
+@keyframes tension-beat {
+    from { transform: scale(1); opacity: 0.6; }
+    to   { transform: scale(1.5); opacity: 1; }
+}
+
+/* ---- Mosaic mode: angled tiles, colour tints, soft radial glow ---- */
+body.mosaic {
+    background-image:
+        radial-gradient(1100px 650px at 15% -10%, rgba(88, 166, 255, 0.16), transparent 60%),
+        radial-gradient(1000px 650px at 90% 110%, rgba(167, 139, 250, 0.15), transparent 60%),
+        radial-gradient(820px 560px at 50% 40%, rgba(57, 220, 165, 0.08), transparent 70%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.board.mosaic .cell:not(.winner) {
+    background: var(--cell-tint, #0d1528);
+    clip-path: polygon(
+        6% 0%, 94% 0%, 100% 6%, 100% 94%,
+        94% 100%, 6% 100%, 0% 94%, 0% 6%
+    );
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tension .pulse { animation: none; }
+}
+
+/* ---- Start screen (name entry before the game) ---- */
+#startScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: var(--bg);
+    background-image:
+        radial-gradient(1100px 650px at 15% -10%, rgba(88, 166, 255, 0.16), transparent 60%),
+        radial-gradient(1000px 650px at 90% 110%, rgba(167, 139, 250, 0.15), transparent 60%);
+    background-repeat: no-repeat;
+}
+
+#startScreen[hidden] { display: none; }
+
+.start-card {
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.start-title {
+    font-size: clamp(28px, 5vw, 40px);
+    margin-bottom: 6px;
+}
+
+.start-card .subtitle { margin-bottom: 16px; }
+
+.start-lead {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 22px;
+}
+
+.start-card .setting {
+    text-align: left;
+    margin-bottom: 14px;
+}
+
+.start-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 13px;
+    font-size: 15px;
+}
+
+.audio-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+}

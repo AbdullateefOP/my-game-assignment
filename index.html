@@ -3,91 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Noughts and Crosses — a two-player game.">
     <title>Advanced Noughts & Crosses | IS3S664</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="mosaic-mode">
-    <!-- This game has been implemented from scratch -->
+<body>
+    <!-- Start screen: player details are collected before the game begins. -->
+    <div id="startScreen">
+        <div class="panel start-card">
+            <h1 class="start-title">Noughts &amp; Crosses</h1>
+            <p class="subtitle">USW Advanced Internet &amp; Mobile Computing</p>
+            <p class="start-lead">Enter the players' details to begin.</p>
 
-    <!-- Start screen: players enter their names before the game begins. -->
-    <div id="start-screen" class="game-container">
-        <header>
-            <h1>Noughts & Crosses</h1>
-            <p class="subtitle">USW Advanced Internet & Mobile Computing</p>
-        </header>
-        <p class="intro">Enter both players' names to begin.</p>
+            <div class="setting">
+                <label for="nameX">Player X name</label>
+                <input type="text" id="nameX" maxlength="12" placeholder="Player X" autocomplete="off">
+            </div>
 
-        <div class="name-field x">
-            <label for="name-x">Player <span class="mark">X</span></label>
-            <input type="text" id="name-x" maxlength="12" placeholder="Player X" autocomplete="off">
+            <div class="setting">
+                <label for="nameO">Player O name</label>
+                <input type="text" id="nameO" maxlength="12" placeholder="Player O" autocomplete="off">
+            </div>
+
+            <button id="startBtn" class="primary-button start-btn" type="button">Start Game</button>
+            <p class="audio-note">🔊 Sound on — tap Start to enable music</p>
         </div>
-
-        <p class="vs">VS</p>
-
-        <div class="name-field o">
-            <label for="name-o">Player <span class="mark">O</span></label>
-            <input type="text" id="name-o" maxlength="12" placeholder="Player O" autocomplete="off">
-        </div>
-
-        <button id="start-btn" class="btn start-btn" type="button">Start Game</button>
-        <p class="audio-note">🔊 Sound on — tap Start to enable music</p>
     </div>
 
-    <!-- Game screen (hidden until the game starts) -->
-    <div id="game" class="game-container">
-        <header>
-            <h1>Noughts & Crosses</h1>
-            <p class="subtitle">USW Advanced Internet & Mobile Computing</p>
+    <main class="app">
+        <header class="header">
+            <div>
+                <h1>Noughts &amp; Crosses</h1>
+                <p class="subtitle">USW Advanced Internet &amp; Mobile Computing</p>
+            </div>
         </header>
 
-        <!-- Control Panel / Enhancements -->
-        <div class="controls">
-            <div class="control-group">
-                <label for="grid-size">Grid:</label>
-                <select id="grid-size">
-                    <option value="3">3 x 3 (Standard)</option>
-                    <option value="4">4 x 4 (Advanced)</option>
+        <section class="settings panel">
+            <div class="setting">
+                <label for="boardSize">Board size</label>
+                <select id="boardSize">
+                    <option value="3">3 x 3</option>
+                    <option value="4">4 x 4</option>
                 </select>
             </div>
-            <button id="mute-btn" class="btn-icon" type="button" aria-pressed="false" title="Mute sound">🔊</button>
-            <button id="mosaic-toggle-btn" class="btn btn-secondary" type="button">Mosaic: On</button>
-            <button id="reset-btn" class="btn" type="button">Restart</button>
-        </div>
 
-        <!-- Scoreboard (Persistent via localStorage) -->
-        <div class="scoreboard">
-            <div class="score-card" id="card-x">
-                <span id="label-x">Player X</span>
-                <span id="score-x">0</span>
+            <div class="setting">
+                <label for="matchMode">Match format</label>
+                <select id="matchMode">
+                    <option value="single">Single game</option>
+                    <option value="best3">Best of 3</option>
+                </select>
             </div>
-            <div class="score-card">
-                <span>Draws</span>
-                <span id="score-draw">0</span>
+        </section>
+
+        <section class="game-layout">
+            <aside class="scoreboard panel">
+                <h2>Scoreboard</h2>
+                <div class="score-row" id="rowX">
+                    <div class="player-symbol">X</div>
+                    <div class="player-info">
+                        <strong id="playerOneLabel">Player X</strong>
+                        <span>Wins</span>
+                    </div>
+                    <strong class="score" id="scoreX">0</strong>
+                </div>
+                <div class="score-row" id="rowO">
+                    <div class="player-symbol o-symbol">O</div>
+                    <div class="player-info">
+                        <strong id="playerTwoLabel">Player O</strong>
+                        <span>Wins</span>
+                    </div>
+                    <strong class="score" id="scoreO">0</strong>
+                </div>
+                <div class="draw-row">
+                    <span>Draws</span>
+                    <strong id="draws">0</strong>
+                </div>
+                <div class="draw-row">
+                    <span>Games played</span>
+                    <strong id="gamesPlayed">0</strong>
+                </div>
+                <button id="resetScores" class="text-button">Reset statistics</button>
+            </aside>
+
+            <section class="game-area panel">
+                <div class="game-top">
+                    <div>
+                        <p class="eyebrow">CURRENT GAME</p>
+                        <h2 id="gameStatus">X's turn</h2>
+                    </div>
+                    <div class="game-top-right">
+                        <button id="mosaicToggle" class="chip-button" type="button" aria-pressed="true">Mosaic: On</button>
+                        <button id="muteToggle" class="chip-button" type="button" aria-pressed="false" title="Mute sound">🔊</button>
+                        <div class="timer">
+                            <span>TIME</span>
+                            <strong id="timer">00:00</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="board" class="board" aria-label="Game board"></div>
+
+                <div id="tension" class="tension" hidden>
+                    <span class="pulse"></span> <span id="tensionText"></span>
+                </div>
+
+                <p id="gameMessage" class="game-message" aria-live="polite">
+                    Make your first move!
+                </p>
+
+                <div class="game-actions">
+                    <button id="newGame" class="primary-button">New Game</button>
+                    <button id="resetMatch" class="secondary-button">Reset Match</button>
+                    <button id="changePlayers" class="secondary-button">Change Players</button>
+                </div>
+            </section>
+        </section>
+
+        <section class="history panel">
+            <div class="history-heading">
+                <h2>Recent Games</h2>
+                <span>Game history</span>
             </div>
-            <div class="score-card" id="card-o">
-                <span id="label-o">Player O</span>
-                <span id="score-o">0</span>
+
+            <ul id="historyList">
+                <li class="empty-history">
+                    Your completed games will appear here.
+                </li>
+            </ul>
+
+            <div class="history-pagination">
+                <button id="previousPage" disabled>&larr; Previous</button>
+                <span id="pageInfo">Page 1 of 1</span>
+                <button id="nextPage" disabled>Next &rarr;</button>
             </div>
-        </div>
+        </section>
 
-        <!-- Game Status -->
-        <div id="status" class="status" role="status" aria-live="polite">Player X's move</div>
+        <footer>
+            <p>Noughts &amp; Crosses · USW Advanced Internet &amp; Mobile Computing</p>
+        </footer>
+    </main>
 
-        <!-- Tension indicator (shown when someone is one move from winning) -->
-        <div id="tension" class="tension" hidden><span class="pulse"></span> <span id="tension-text"></span></div>
-
-        <!-- Dynamic Game Board -->
-        <div id="board" class="board grid-3" role="grid" aria-label="Game board"></div>
-
-        <!-- Secondary actions -->
-        <div class="footer-actions">
-            <button id="change-players-btn" class="btn-text" type="button">Change Players</button>
-            <span class="dot" aria-hidden="true">·</span>
-            <button id="clear-stats-btn" class="btn-text" type="button">Reset Scoreboard</button>
-        </div>
-    </div>
-
-    <script src="audio.js"></script>
-    <script src="script.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/scoreboard.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
