@@ -1,6 +1,5 @@
 const App = {
     matchWins: { X: 0, O: 0 },
-    aiThinking: false,
     gameStarted: false,
     finished: false,
     nextGameTimer: null,
@@ -20,7 +19,7 @@ const App = {
     init() {
         this.loadPrefs();
         this.bindEvents();
-        this.updateSettings();
+        this.updateLabels();
         this.applyMosaic();
         this.updateMuteButton();
         Scoreboard.render();
@@ -57,8 +56,6 @@ const App = {
 
     // ---------- names ----------
     playerName(symbol) {
-        const mode = document.getElementById("gameMode").value;
-        if (symbol === "O" && mode === "ai") return "Computer";
         const el = document.getElementById(symbol === "X" ? "nameX" : "nameO");
         const value = el.value.trim();
         return value || (symbol === "X" ? "Player X" : "Player O");
@@ -93,18 +90,11 @@ const App = {
         document.getElementById("resetScores")
             .addEventListener("click", () => this.resetScores());
 
-        // Game mode is chosen on the start screen; just update which fields show.
-        document.getElementById("gameMode")
-            .addEventListener("change", () => this.updateSettings());
-
         document.getElementById("boardSize")
             .addEventListener("change", () => {
                 this.matchWins = { X: 0, O: 0 };
                 this.newGame();
             });
-
-        document.getElementById("difficulty")
-            .addEventListener("change", () => this.newGame());
 
         document.getElementById("matchMode")
             .addEventListener("change", () => this.resetMatch());
@@ -140,7 +130,7 @@ const App = {
     startGame() {
         this.ensureAudio();
         this.saveNames();
-        this.updateSettings();
+        this.updateLabels();
         document.getElementById("startScreen").hidden = true;
         this.matchWins = { X: 0, O: 0 };
         this.newGame();
@@ -151,19 +141,6 @@ const App = {
         GameAudio.stopMusic();
         document.getElementById("startScreen").hidden = false;
         document.getElementById("nameX").focus();
-    },
-
-    updateSettings() {
-        const mode = document.getElementById("gameMode").value;
-
-        document.getElementById("difficultySetting").style.display =
-            mode === "ai" ? "block" : "none";
-
-        // In AI mode Player O is the computer — hide the O name field.
-        document.getElementById("nameOSetting").style.display =
-            mode === "ai" ? "none" : "block";
-
-        this.updateLabels();
     },
 
     applyMosaic() {
@@ -181,7 +158,7 @@ const App = {
     },
 
     refreshStatus() {
-        if (this.finished || Game.gameOver || !Game.board.length || this.aiThinking) return;
+        if (this.finished || Game.gameOver || !Game.board.length) return;
         document.getElementById("gameStatus").textContent =
             `${this.playerName(Game.currentPlayer)}'s turn`;
     },
@@ -196,7 +173,6 @@ const App = {
         const size = Number(document.getElementById("boardSize").value);
         Game.start(size);
 
-        this.aiThinking = false;
         this.gameStarted = false;
         this.finished = false;
 
@@ -230,10 +206,6 @@ const App = {
         boardElement.classList.toggle("size-4", Game.size === 4);
         boardElement.classList.toggle("mosaic", this.mosaicOn);
 
-        const isAITurn =
-            document.getElementById("gameMode").value === "ai" &&
-            Game.currentPlayer === "O";
-
         Game.board.forEach((value, index) => {
             const cell = document.createElement("button");
             cell.className = "cell";
@@ -249,8 +221,7 @@ const App = {
                     this.mosaicPalette[(index + Game.size) % this.mosaicPalette.length]);
             }
 
-            cell.disabled =
-                Boolean(value) || Game.gameOver || this.aiThinking || isAITurn;
+            cell.disabled = Boolean(value) || Game.gameOver;
 
             cell.addEventListener("click", () => this.handleMove(index));
             boardElement.appendChild(cell);
@@ -258,7 +229,7 @@ const App = {
     },
 
     handleMove(index) {
-        if (this.finished || this.aiThinking) return;
+        if (this.finished) return;
 
         this.ensureAudio();
 
@@ -286,35 +257,6 @@ const App = {
             `${this.playerName(Game.currentPlayer)}'s turn`;
 
         this.updateTension();
-
-        if (
-            document.getElementById("gameMode").value === "ai" &&
-            Game.currentPlayer === "O"
-        ) {
-            this.computerMove();
-        }
-    },
-
-    computerMove() {
-        this.aiThinking = true;
-        this.renderBoard();
-
-        document.getElementById("gameStatus").textContent = "Computer thinking...";
-
-        setTimeout(() => {
-            if (this.finished || Game.gameOver) return;
-
-            const difficulty = document.getElementById("difficulty").value;
-            const move = AI.chooseMove(Game.board, "O", difficulty, Game.size);
-
-            this.aiThinking = false;
-
-            if (move !== null) {
-                const result = Game.makeMove(move);
-                GameAudio.move("O");
-                this.processResult(result);
-            }
-        }, 400);
     },
 
     // Fair tension cue: music + a pill, but never highlights the winning square.
