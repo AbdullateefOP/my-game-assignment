@@ -8,7 +8,33 @@
 </head>
 <body class="mosaic-mode">
     <!-- This game has been implemented from scratch -->
-    <div class="game-container">
+
+    <!-- Start screen: players enter their names before the game begins. -->
+    <div id="start-screen" class="game-container">
+        <header>
+            <h1>Noughts & Crosses</h1>
+            <p class="subtitle">USW Advanced Internet & Mobile Computing</p>
+        </header>
+        <p class="intro">Enter both players' names to begin.</p>
+
+        <div class="name-field x">
+            <label for="name-x">Player <span class="mark">X</span></label>
+            <input type="text" id="name-x" maxlength="12" placeholder="Player X" autocomplete="off">
+        </div>
+
+        <p class="vs">VS</p>
+
+        <div class="name-field o">
+            <label for="name-o">Player <span class="mark">O</span></label>
+            <input type="text" id="name-o" maxlength="12" placeholder="Player O" autocomplete="off">
+        </div>
+
+        <button id="start-btn" class="btn start-btn" type="button">Start Game</button>
+        <p class="audio-note">🔊 Sound on — tap Start to enable music</p>
+    </div>
+
+    <!-- Game screen (hidden until the game starts) -->
+    <div id="game" class="game-container">
         <header>
             <h1>Noughts & Crosses</h1>
             <p class="subtitle">USW Advanced Internet & Mobile Computing</p>
@@ -17,42 +43,51 @@
         <!-- Control Panel / Enhancements -->
         <div class="controls">
             <div class="control-group">
-                <label for="grid-size">Grid Size:</label>
+                <label for="grid-size">Grid:</label>
                 <select id="grid-size">
                     <option value="3">3 x 3 (Standard)</option>
                     <option value="4">4 x 4 (Advanced)</option>
                 </select>
             </div>
+            <button id="mute-btn" class="btn-icon" type="button" aria-pressed="false" title="Mute sound">🔊</button>
             <button id="mosaic-toggle-btn" class="btn btn-secondary" type="button">Mosaic: On</button>
-            <button id="reset-btn" class="btn" type="button">Restart Game</button>
+            <button id="reset-btn" class="btn" type="button">Restart</button>
         </div>
 
         <!-- Scoreboard (Persistent via localStorage) -->
         <div class="scoreboard">
-            <div class="score-card">
-                <span>Player X</span>
+            <div class="score-card" id="card-x">
+                <span id="label-x">Player X</span>
                 <span id="score-x">0</span>
             </div>
             <div class="score-card">
                 <span>Draws</span>
                 <span id="score-draw">0</span>
             </div>
-            <div class="score-card">
-                <span>Player O</span>
+            <div class="score-card" id="card-o">
+                <span id="label-o">Player O</span>
                 <span id="score-o">0</span>
             </div>
         </div>
 
         <!-- Game Status -->
-        <div id="status" class="status">Player X's Turn</div>
+        <div id="status" class="status" role="status" aria-live="polite">Player X's move</div>
+
+        <!-- Tension indicator (shown when someone is one move from winning) -->
+        <div id="tension" class="tension" hidden><span class="pulse"></span> <span id="tension-text"></span></div>
 
         <!-- Dynamic Game Board -->
-        <div id="board" class="board grid-3"></div>
+        <div id="board" class="board grid-3" role="grid" aria-label="Game board"></div>
 
-        <!-- Reset Stats Option -->
-        <button id="clear-stats-btn" class="btn-text" type="button">Reset Scoreboard</button>
+        <!-- Secondary actions -->
+        <div class="footer-actions">
+            <button id="change-players-btn" class="btn-text" type="button">Change Players</button>
+            <span class="dot" aria-hidden="true">·</span>
+            <button id="clear-stats-btn" class="btn-text" type="button">Reset Scoreboard</button>
+        </div>
     </div>
 
+    <script src="audio.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
